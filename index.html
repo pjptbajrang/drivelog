@@ -1,0 +1,644 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;DriveLog – Uber Earnings&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="manifest" href="manifest.json"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="theme-color" content="#1A3C5E"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--primary: #1A3C5E;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--accent: #2ECC71;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--loss: #E74C3C;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--bg: #F4F7F9;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--card: #FFFFFF;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--text: #2C3E50;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--nav-bg: #FFFFFF;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>body.dark-mode {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--bg: #0B1928;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--card: #1A2A3A;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--text: #E0E0E0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--nav-bg: #13212F;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0; background: var(--bg); color: var(--text);<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding-bottom: 70px; transition: background 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Typography */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h1, h2, h3 { margin: 0; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.currency { font-family: 'Courier New', Courier, monospace; font-weight: bold; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Layout */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.container { padding: 15px; max-width: 500px; margin: auto; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.screen { display: none; animation: fadeIn 0.3s ease; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.screen.active { display: block; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Cards */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.card {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: var(--card); border-radius: 12px; padding: 15px;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Form Elements */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.form-group { margin-bottom: 15px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>label { display: block; font-size: 12px; margin-bottom: 5px; opacity: 0.8; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>input, select, textarea {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: var(--card); color: var(--text); font-size: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: var(--primary); color: white; border: none; padding: 12px;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-accent { background: var(--accent); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Navigation */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nav {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: fixed; bottom: 0; width: 100%; background: var(--nav-bg);<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex; justify-content: space-around; padding: 10px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nav button {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: none; border: none; color: var(--text); opacity: 0.6;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 10px; display: flex; flex-direction: column; align-items: center;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nav button.active { opacity: 1; color: var(--primary); font-weight: bold; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nav button i { font-size: 20px; margin-bottom: 4px; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Trip Cards */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.trip-item { border-left: 4px solid var(--primary); padding-left: 10px; position: relative; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.trip-meta { font-size: 12px; display: flex; justify-content: space-between; margin-top: 5px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; background: #eee; color: #333; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Table Style */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.pl-table { width: 100%; border-collapse: collapse; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.pl-table td { padding: 10px 0; border-bottom: 1px solid #eee; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.pl-table .total-row { font-weight: bold; font-size: 1.1em; border-top: 2px solid var(--primary); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Toast */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#toast {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(0,0,0,0.8); color: white; padding: 10px 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 20px; font-size: 14px; display: none; z-index: 2000;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="toast"&gt;Saved successfully!&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 1. HOME SCREEN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="screen-home" class="screen active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 id="home-date"&gt;Today&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p id="home-greeting" style="margin-bottom: 20px;"&gt;Ram Ram, Himanshu!&lt;/p&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card stats-grid" style="background: var(--primary); color: white;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label style="color: #ccc;"&gt;GROSS EARNINGS&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="currency" id="dash-gross" style="font-size: 24px;"&gt;₹0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label style="color: #ccc;"&gt;NET PROFIT&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="currency" id="dash-net" style="font-size: 24px;"&gt;₹0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style="margin-top:10px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label style="color: #ccc;"&gt;TRIPS&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="dash-trips" style="font-size: 18px;"&gt;0&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-accent" onclick="showScreen('screen-log')" style="margin-bottom: 15px;"&gt;+ Add New Trip&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-outline" onclick="showScreen('screen-pl')"&gt;View Today's P&amp;L Summary&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="reminder-banner" style="display:none; margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 14px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>⚠️ No trips logged for today yet. Don't forget to track your earnings!</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 2. TRIP LOG SCREEN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="screen-log" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Daily Trip Log&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card" style="margin-top:15px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stats-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;Start Odometer&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="start-km" placeholder="0" onchange="saveDailyHeader()"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label&gt;End Odometer&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="end-km" placeholder="0" onchange="saveDailyHeader()"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="trip-form-container" class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h4 style="margin-bottom:15px"&gt;New Trip Entry&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stats-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;&lt;label&gt;From&lt;/label&gt;&lt;input type="text" id="trip-from" placeholder="Pickup"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;&lt;label&gt;To&lt;/label&gt;&lt;input type="text" id="trip-to" placeholder="Drop"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stats-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;&lt;label&gt;Fare (₹)&lt;/label&gt;&lt;input type="number" id="trip-fare"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;&lt;label&gt;Tip (₹)&lt;/label&gt;&lt;input type="number" id="trip-tip" value="0"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="stats-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;&lt;label&gt;Duration (Min)&lt;/label&gt;&lt;input type="number" id="trip-duration"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="form-group"&gt;&lt;label&gt;Wait Time (Min)&lt;/label&gt;&lt;input type="number" id="trip-wait" value="0"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label&gt;Payment Mode&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select id="trip-pay"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="UPI"&gt;UPI&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Cash"&gt;Cash&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="Card"&gt;Card&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-accent" onclick="addTrip()"&gt;Save Trip&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="trips-list"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Trips rendered here --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 3. P&amp;L SUMMARY SCREEN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="screen-pl" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;P&amp;L Summary&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card" style="margin-top:15px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;table class="pl-table"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tr&gt;&lt;td&gt;Gross Earnings&lt;/td&gt;&lt;td class="currency" id="pl-gross"&gt;₹0&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tr&gt;&lt;td&gt;Everest Fleet Rent&lt;/td&gt;&lt;td class="currency" id="pl-rent"&gt;- ₹0&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tr&gt;&lt;td&gt;Personal Insurance&lt;/td&gt;&lt;td class="currency" id="pl-ins"&gt;- ₹0&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;Fuel Cost (&lt;span id="pl-fuel-type"&gt;CNG&lt;/span&gt;)&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;&lt;input type="number" id="pl-fuel-input" style="width:80px; padding:5px" onchange="calculatePL()"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;Other (Tolls/Food)&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;&lt;input type="number" id="pl-other-input" style="width:80px; padding:5px" onchange="calculatePL()"&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tr class="total-row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;Net Profit&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td class="currency" id="pl-net"&gt;₹0&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card stats-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;&lt;label&gt;Total KM&lt;/label&gt;&lt;div id="pl-tot-km"&gt;0&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;&lt;label&gt;Earning/KM&lt;/label&gt;&lt;div id="pl-rate-km"&gt;₹0&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;&lt;label&gt;Wait Time&lt;/label&gt;&lt;div id="pl-tot-wait"&gt;0m&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div&gt;&lt;label&gt;Avg Fare&lt;/label&gt;&lt;div id="pl-avg-fare"&gt;₹0&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-primary" onclick="lockDay()"&gt;Lock &amp; Save Day&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 4. HISTORY SCREEN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="screen-history" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Work History&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="history-list" style="margin-top:15px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- History cards --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 5. ANALYTICS SCREEN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="screen-analytics" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Analytics&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;canvas id="earningsChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;canvas id="paymentChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card" id="analytics-metrics"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;!-- Metrics injected --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 6. SETTINGS SCREEN --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="screen-settings" class="screen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Settings&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label&gt;Driver Name&lt;/label&gt;&lt;input type="text" id="set-name" value="Himanshu"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label&gt;Fleet Daily Rent (₹)&lt;/label&gt;&lt;input type="number" id="set-rent" value="1000"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;&lt;label&gt;Daily Insurance (₹)&lt;/label&gt;&lt;input type="number" id="set-ins" value="50"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label&gt;Fuel Type&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select id="set-fuel"&gt;&lt;option value="CNG"&gt;CNG&lt;/option&gt;&lt;option value="Petrol"&gt;Petrol&lt;/option&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="form-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label&gt;Dark Mode&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="checkbox" id="set-dark" style="width: auto;" onchange="toggleDarkMode()"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-primary" onclick="saveSettings()"&gt;Save Configuration&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn btn-outline" onclick="exportData()" style="margin-bottom:10px"&gt;Backup Data (JSON)&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn" style="background:var(--loss)" onclick="resetAll()"&gt;Reset All Data&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- NAVIGATION --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="showScreen('screen-home')" id="nav-home" class="active"&gt;&lt;i&gt;🏠&lt;/i&gt;Home&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="showScreen('screen-log')" id="nav-log"&gt;&lt;i&gt;📝&lt;/i&gt;Log&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="showScreen('screen-history')" id="nav-history"&gt;&lt;i&gt;📅&lt;/i&gt;History&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="showScreen('screen-analytics')" id="nav-analytics"&gt;&lt;i&gt;📊&lt;/i&gt;Stats&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="showScreen('screen-settings')" id="nav-settings"&gt;&lt;i&gt;⚙️&lt;/i&gt;Settings&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- DATABASE LOGIC ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let db;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const dbRequest = indexedDB.open("DriveLogDB", 1);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dbRequest.onupgradeneeded = (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>db = e.target.result;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>db.createObjectStore("trips", { keyPath: "id", autoIncrement: true });</p>
+<p class="p1"><span class="Apple-converted-space">            </span>db.createObjectStore("dailySummary", { keyPath: "date" });</p>
+<p class="p1"><span class="Apple-converted-space">            </span>db.createObjectStore("settings", { keyPath: "id" });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dbRequest.onsuccess = (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>db = e.target.result;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>initializeApp();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- APP LOGIC ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let currentSettings = { id: 1, driverName: 'Himanshu', dailyRent: 1000, insurance: 50, fuelType: 'CNG', darkMode: false };</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const todayStr = new Date().toISOString().split('T')[0];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function initializeApp() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>await loadSettings();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>renderDashboard();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>checkReminder();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (currentSettings.darkMode) document.body.classList.add('dark-mode');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function showScreen(screenId) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.screen').forEach(s =&gt; s.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById(screenId).classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('nav button').forEach(b =&gt; b.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('nav-' + screenId.split('-')[1]).classList.add('active');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(screenId === 'screen-home') renderDashboard();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(screenId === 'screen-log') renderTrips();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(screenId === 'screen-pl') renderPL();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(screenId === 'screen-history') renderHistory();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(screenId === 'screen-analytics') renderAnalytics();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- SETTINGS ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function loadSettings() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return new Promise(resolve =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const tx = db.transaction("settings", "readonly");</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const store = tx.objectStore("settings");</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const req = store.get(1);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>req.onsuccess = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (req.result) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>currentSettings = req.result;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('set-name').value = currentSettings.driverName;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('set-rent').value = currentSettings.dailyRent;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('set-ins').value = currentSettings.insurance;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('set-fuel').value = currentSettings.fuelType;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('set-dark').checked = currentSettings.darkMode;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>resolve();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function saveSettings() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>currentSettings = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>id: 1,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>driverName: document.getElementById('set-name').value,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>dailyRent: parseFloat(document.getElementById('set-rent').value),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>insurance: parseFloat(document.getElementById('set-ins').value),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fuelType: document.getElementById('set-fuel').value,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>darkMode: document.getElementById('set-dark').checked</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tx = db.transaction("settings", "readwrite");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tx.objectStore("settings").put(currentSettings);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showToast("Settings Updated");</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function toggleDarkMode() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.body.classList.toggle('dark-mode');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- TRIPS ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function addTrip() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const trip = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>date: todayStr,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>from: document.getElementById('trip-from').value,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>to: document.getElementById('trip-to').value,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>fare: parseFloat(document.getElementById('trip-fare').value) || 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tip: parseFloat(document.getElementById('trip-tip').value) || 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>duration: parseInt(document.getElementById('trip-duration').value) || 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>waitingTime: parseInt(document.getElementById('trip-wait').value) || 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>paymentMode: document.getElementById('trip-pay').value,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tx = db.transaction("trips", "readwrite");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tx.objectStore("trips").add(trip);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showToast("Trip Added");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>renderTrips();</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Reset form</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('trip-from').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('trip-to').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('trip-fare').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('trip-tip').value = '0';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function renderTrips() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tx = db.transaction("trips", "readonly");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const store = tx.objectStore("trips");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const req = store.getAll();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>req.onsuccess = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const todayTrips = req.result.filter(t =&gt; t.date === todayStr);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const list = document.getElementById('trips-list');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>list.innerHTML = '&lt;h4&gt;Today\'s Trips&lt;/h4&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let total = 0;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>todayTrips.forEach((t, i) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>total += (t.fare + t.tip);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>list.innerHTML += `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="card trip-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="display:flex; justify-content:space-between"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;strong&gt;${t.from} ➔ ${t.to}&lt;/strong&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="currency"&gt;₹${t.fare + t.tip}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="trip-meta"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;${t.time} | ${t.duration}m | Wait: ${t.waitingTime}m&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="badge"&gt;${t.paymentMode}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Load daily header info</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const hReq = db.transaction("dailySummary", "readonly").objectStore("dailySummary").get(todayStr);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>hReq.onsuccess = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if(hReq.result) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('start-km').value = hReq.result.startKM || 0;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('end-km').value = hReq.result.endKM || 0;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- DASHBOARD &amp; PL ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function renderDashboard() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const trips = await getAllTrips();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const todayTrips = trips.filter(t =&gt; t.date === todayStr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const gross = todayTrips.reduce((acc, t) =&gt; acc + t.fare + t.tip, 0);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('home-date').innerText = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('dash-gross').innerText = formatINR(gross);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('dash-trips').innerText = todayTrips.length;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Calculate Net for dashboard</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const summary = await getSummary(todayStr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const net = gross - currentSettings.dailyRent - currentSettings.insurance - (summary.fuel || 0) - (summary.other || 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('dash-net').innerText = formatINR(net);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('dash-net').style.color = net &gt;= 0 ? 'var(--accent)' : 'var(--loss)';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function renderPL() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const trips = await getAllTrips();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const todayTrips = trips.filter(t =&gt; t.date === todayStr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const gross = todayTrips.reduce((acc, t) =&gt; acc + t.fare + t.tip, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const summary = await getSummary(todayStr);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-gross').innerText = formatINR(gross);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-rent').innerText = `- ${formatINR(currentSettings.dailyRent)}`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-ins').innerText = `- ${formatINR(currentSettings.insurance)}`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-fuel-type').innerText = currentSettings.fuelType;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-fuel-input').value = summary.fuel || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-other-input').value = summary.other || 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const fuel = parseFloat(document.getElementById('pl-fuel-input').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const other = parseFloat(document.getElementById('pl-other-input').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const net = gross - currentSettings.dailyRent - currentSettings.insurance - fuel - other;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-net').innerText = formatINR(net);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-net').style.color = net &gt;= 0 ? 'var(--accent)' : 'var(--loss)';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Metrics</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const km = (summary.endKM || 0) - (summary.startKM || 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-tot-km').innerText = km + " km";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-rate-km').innerText = km &gt; 0 ? formatINR(gross/km) : '₹0';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-tot-wait').innerText = todayTrips.reduce((acc,t) =&gt; acc + t.waitingTime, 0) + "m";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('pl-avg-fare').innerText = todayTrips.length &gt; 0 ? formatINR(gross/todayTrips.length) : '₹0';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function calculatePL() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const fuel = parseFloat(document.getElementById('pl-fuel-input').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const other = parseFloat(document.getElementById('pl-other-input').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>saveDailyHeader(fuel, other);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>renderPL();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function saveDailyHeader(fuel = null, other = null) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const startKM = parseFloat(document.getElementById('start-km').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const endKM = parseFloat(document.getElementById('end-km').value) || 0;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tx = db.transaction("dailySummary", "readwrite");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const store = tx.objectStore("dailySummary");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const req = store.get(todayStr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>req.onsuccess = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const data = req.result || { date: todayStr };</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data.startKM = startKM;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data.endKM = endKM;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if(fuel !== null) data.fuel = fuel;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if(other !== null) data.other = other;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>store.put(data);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function lockDay() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showToast("Day Locked &amp; Saved");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showScreen('screen-home');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- HISTORY ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function renderHistory() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const trips = await getAllTrips();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const summaries = await getAllSummaries();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const dates = [...new Set(trips.map(t =&gt; t.date))].sort().reverse();</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const list = document.getElementById('history-list');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>list.innerHTML = '';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>dates.forEach(d =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const dayTrips = trips.filter(t =&gt; t.date === d);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const daySummary = summaries.find(s =&gt; s.date === d) || {};</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const gross = dayTrips.reduce((acc, t) =&gt; acc + t.fare + t.tip, 0);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const net = gross - currentSettings.dailyRent - currentSettings.insurance - (daySummary.fuel || 0) - (daySummary.other || 0);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const colorClass = net &gt; 0 ? 'var(--accent)' : 'var(--loss)';</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>list.innerHTML += `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="card" onclick="alert('Viewing full details for ${d}')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style="display:flex; justify-content:space-between; align-items:center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;strong&gt;${new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short'})}&lt;/strong&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span style="color:${colorClass}; font-weight:bold"&gt;${formatINR(net)} Net&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="trip-meta"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span&gt;${dayTrips.length} Trips | Gross: ${formatINR(gross)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- ANALYTICS ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function renderAnalytics() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const trips = await getAllTrips();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const summaries = await getAllSummaries();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const last7Days = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for(let i=6; i&gt;=0; i--) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const d = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>d.setDate(d.getDate() - i);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>last7Days.push(d.toISOString().split('T')[0]);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const dailyNet = last7Days.map(d =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const dayTrips = trips.filter(t =&gt; t.date === d);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const daySummary = summaries.find(s =&gt; s.date === d) || {};</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const gross = dayTrips.reduce((acc, t) =&gt; acc + t.fare + t.tip, 0);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return gross - currentSettings.dailyRent - currentSettings.insurance - (daySummary.fuel || 0) - (daySummary.other || 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Payment Split</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const modes = { UPI: 0, Cash: 0, Card: 0 };</p>
+<p class="p1"><span class="Apple-converted-space">            </span>trips.forEach(t =&gt; modes[t.paymentMode]++);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Charts</p>
+<p class="p1"><span class="Apple-converted-space">            </span>new Chart(document.getElementById('earningsChart'), {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: 'line',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: last7Days.map(d =&gt; d.split('-')[2]),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{ label: 'Daily Net Profit (₹)', data: dailyNet, borderColor: '#1A3C5E', tension: 0.1 }]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>new Chart(document.getElementById('paymentChart'), {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: 'doughnut',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: ['UPI', 'Cash', 'Card'],</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{ data: [modes.UPI, modes.Cash, modes.Card], backgroundColor: ['#2ECC71', '#F1C40F', '#3498DB'] }]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>options: { plugins: { title: { display: true, text: 'Payment Mode Split' } } }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// --- UTILS ---</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function formatINR(val) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function showToast(msg) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const t = document.getElementById('toast');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>t.innerText = msg;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>t.style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; t.style.display = 'none', 2000);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function getAllTrips() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return new Promise(resolve =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const req = db.transaction("trips", "readonly").objectStore("trips").getAll();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>req.onsuccess = () =&gt; resolve(req.result);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function getAllSummaries() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return new Promise(resolve =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const req = db.transaction("dailySummary", "readonly").objectStore("dailySummary").getAll();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>req.onsuccess = () =&gt; resolve(req.result);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function getSummary(date) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return new Promise(resolve =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const req = db.transaction("dailySummary", "readonly").objectStore("dailySummary").get(date);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>req.onsuccess = () =&gt; resolve(req.result || {});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function checkReminder() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const now = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(now.getHours() &gt;= 21) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>getAllTrips().then(trips =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if(trips.filter(t =&gt; t.date === todayStr).length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>document.getElementById('reminder-banner').style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function exportData() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Promise.all([getAllTrips(), getAllSummaries(), loadSettings()]).then(data =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const url = URL.createObjectURL(blob);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const a = document.createElement('a');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>a.href = url;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>a.download = `drivelog_backup_${todayStr}.json`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>a.click();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function resetAll() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(confirm("Are you sure? This will delete ALL trip history permanently.")) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const tx = db.transaction(["trips", "dailySummary"], "readwrite");</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tx.objectStore("trips").clear();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tx.objectStore("dailySummary").clear();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>location.reload();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Service Worker Register</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if ('serviceWorker' in navigator) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>navigator.serviceWorker.register('service-worker.js');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
