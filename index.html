@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DriveLog – Uber Earnings</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1A3C5E">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1A3C5E;
+            --accent: #2ECC71;
+            --loss: #E74C3C;
+            --bg: #F4F7F9;
+            --card: #FFFFFF;
+            --text: #2C3E50;
+            --nav-bg: #FFFFFF;
+        }
+
+        body.dark-mode {
+            --bg: #0B1928;
+            --card: #1A2A3A;
+            --text: #E0E0E0;
+            --nav-bg: #13212F;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; background: var(--bg); color: var(--text); 
+            padding-bottom: 70px; transition: background 0.3s;
+        }
+
+        /* Typography */
+        h1, h2, h3 { margin: 0; }
+        .currency { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+
+        /* Layout */
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+        .screen { display: none; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .card { 
+            background: var(--card); border-radius: 12px; padding: 15px; 
+            margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; margin-bottom: 5px; opacity: 0.8; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; 
+            background: var(--card); color: var(--text); font-size: 16px;
+        }
+        .btn { 
+            background: var(--primary); color: white; border: none; padding: 12px; 
+            border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; 
+        }
+        .btn-accent { background: var(--accent); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+
+        /* Navigation */
+        nav { 
+            position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); 
+            display: flex; justify-content: space-around; padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000;
+        }
+        nav button { 
+            background: none; border: none; color: var(--text); opacity: 0.6; 
+            font-size: 10px; display: flex; flex-direction: column; align-items: center; 
+        }
+        nav button.active { opacity: 1; color: var(--primary); font-weight: bold; }
+        nav button i { font-size: 20px; margin-bottom: 4px; }
+
+        /* Trip Cards */
+        .trip-item { border-left: 4px solid var(--primary); padding-left: 10px; position: relative; }
+        .trip-meta { font-size: 12px; display: flex; justify-content: space-between; margin-top: 5px; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; background: #eee; color: #333; }
+
+        /* Table Style */
+        .pl-table { width: 100%; border-collapse: collapse; }
+        .pl-table td { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .pl-table .total-row { font-weight: bold; font-size: 1.1em; border-top: 2px solid var(--primary); }
+
+        /* Toast */
+        #toast { 
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 10px 20px;
+            border-radius: 20px; font-size: 14px; display: none; z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast">Saved successfully!</div>
+
+    <!-- 1. HOME SCREEN -->
+    <section id="screen-home" class="screen active">
+        <div class="container">
+            <h2 id="home-date">Today</h2>
+            <p id="home-greeting" style="margin-bottom: 20px;">Ram Ram, Himanshu!</p>
+            
+            <div class="card stats-grid" style="background: var(--primary); color: white;">
+                <div>
+                    <label style="color: #ccc;">GROSS EARNINGS</label>
+                    <div class="currency" id="dash-gross" style="font-size: 24px;">₹0</div>
+                </div>
+                <div>
+                    <label style="color: #ccc;">NET PROFIT</label>
+                    <div class="currency" id="dash-net" style="font-size: 24px;">₹0</div>
+                </div>
+                <div style="margin-top:10px">
+                    <label style="color: #ccc;">TRIPS</label>
+                    <div id="dash-trips" style="font-size: 18px;">0</div>
+                </div>
+            </div>
+
+            <button class="btn btn-accent" onclick="showScreen('screen-log')" style="margin-bottom: 15px;">+ Add New Trip</button>
+            <button class="btn btn-outline" onclick="showScreen('screen-pl')">View Today's P&L Summary</button>
+
+            <div id="reminder-banner" style="display:none; margin-top: 20px; background: #fff3cd; padding: 15px; border-radius: 8px; color: #856404; font-size: 14px;">
+                ⚠️ No trips logged for today yet. Don't forget to track your earnings!
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. TRIP LOG SCREEN -->
+    <section id="screen-log" class="screen">
+        <div class="container">
+            <h3>Daily Trip Log</h3>
+            <div class="card" style="margin-top:15px;">
+                <div class="stats-grid">
+                    <div class="form-group">
+                        <label>Start Odometer</label>
+                        <input type="number" id="start-km" placeholder="0" onchange="saveDailyHeader()">
+                    </div>
+                    <div class="form-group">
+                        <label>End Odometer</label>
+                        <input type="number" id="end-km" placeholder="0" onchange="saveDailyHeader()">
+                    </div>
+                </div>
+            </div>
+
+            <div id="trip-form-container" class="card">
+                <h4 style="margin-bottom:15px">New Trip Entry</h4>
+                <div class="stats-grid">
+                    <div class="form-group"><label>From</label><input type="text" id="trip-from" placeholder="Pickup"></div>
+                    <div class="form-group"><label>To</label><input type="text" id="trip-to" placeholder="Drop"></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="form-group"><label>Fare (₹)</label><input type="number" id="trip-fare"></div>
+                    <div class="form-group"><label>Tip (₹)</label><input type="number" id="trip-tip" value="0"></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="form-group"><label>Duration (Min)</label><input type="number" id="trip-duration"></div>
+                    <div class="form-group"><label>Wait Time (Min)</label><input type="number" id="trip-wait" value="0"></div>
+                </div>
+                <div class="form-group">
+                    <label>Payment Mode</label>
+                    <select id="trip-pay">
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
+                <button class="btn btn-accent" onclick="addTrip()">Save Trip</button>
+            </div>
+
+            <div id="trips-list">
+                <!-- Trips rendered here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. P&L SUMMARY SCREEN -->
+    <section id="screen-pl" class="screen">
+        <div class="container">
+            <h3>P&L Summary</h3>
+            <div class="card" style="margin-top:15px;">
+                <table class="pl-table">
+                    <tr><td>Gross Earnings</td><td class="currency" id="pl-gross">₹0</td></tr>
+                    <tr><td>Everest Fleet Rent</td><td class="currency" id="pl-rent">- ₹0</td></tr>
+                    <tr><td>Personal Insurance</td><td class="currency" id="pl-ins">- ₹0</td></tr>
+                    <tr>
+                        <td>Fuel Cost (<span id="pl-fuel-type">CNG</span>)</td>
+                        <td><input type="number" id="pl-fuel-input" style="width:80px; padding:5px" onchange="calculatePL()"></td>
+                    </tr>
+                    <tr>
+                        <td>Other (Tolls/Food)</td>
+                        <td><input type="number" id="pl-other-input" style="width:80px; padding:5px" onchange="calculatePL()"></td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Net Profit</td>
+                        <td class="currency" id="pl-net">₹0</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card stats-grid">
+                <div><label>Total KM</label><div id="pl-tot-km">0</div></div>
+                <div><label>Earning/KM</label><div id="pl-rate-km">₹0</div></div>
+                <div><label>Wait Time</label><div id="pl-tot-wait">0m</div></div>
+                <div><label>Avg Fare</label><div id="pl-avg-fare">₹0</div></div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="lockDay()">Lock & Save Day</button>
+        </div>
+    </section>
+
+    <!-- 4. HISTORY SCREEN -->
+    <section id="screen-history" class="screen">
+        <div class="container">
+            <h3>Work History</h3>
+            <div id="history-list" style="margin-top:15px;">
+                <!-- History cards -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. ANALYTICS SCREEN -->
+    <section id="screen-analytics" class="screen">
+        <div class="container">
+            <h3>Analytics</h3>
+            <div class="card">
+                <canvas id="earningsChart"></canvas>
+            </div>
+            <div class="card">
+                <canvas id="paymentChart"></canvas>
+            </div>
+            <div class="card" id="analytics-metrics">
+                <!-- Metrics injected -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. SETTINGS SCREEN -->
+    <section id="screen-settings" class="screen">
+        <div class="container">
+            <h3>Settings</h3>
+            <div class="card">
+                <div class="form-group"><label>Driver Name</label><input type="text" id="set-name" value="Himanshu"></div>
+                <div class="form-group"><label>Fleet Daily Rent (₹)</label><input type="number" id="set-rent" value="1000"></div>
+                <div class="form-group"><label>Daily Insurance (₹)</label><input type="number" id="set-ins" value="50"></div>
+                <div class="form-group">
+                    <label>Fuel Type</label>
+                    <select id="set-fuel"><option value="CNG">CNG</option><option value="Petrol">Petrol</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Dark Mode</label>
+                    <input type="checkbox" id="set-dark" style="width: auto;" onchange="toggleDarkMode()">
+                </div>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Configuration</button>
+            </div>
+            <button class="btn btn-outline" onclick="exportData()" style="margin-bottom:10px">Backup Data (JSON)</button>
+            <button class="btn" style="background:var(--loss)" onclick="resetAll()">Reset All Data</button>
+        </div>
+    </section>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <button onclick="showScreen('screen-home')" id="nav-home" class="active"><i>🏠</i>Home</button>
+        <button onclick="showScreen('screen-log')" id="nav-log"><i>📝</i>Log</button>
+        <button onclick="showScreen('screen-history')" id="nav-history"><i>📅</i>History</button>
+        <button onclick="showScreen('screen-analytics')" id="nav-analytics"><i>📊</i>Stats</button>
+        <button onclick="showScreen('screen-settings')" id="nav-settings"><i>⚙️</i>Settings</button>
+    </nav>
+
+    <script>
+        // --- DATABASE LOGIC ---
+        let db;
+        const dbRequest = indexedDB.open("DriveLogDB", 1);
+
+        dbRequest.onupgradeneeded = (e) => {
+            db = e.target.result;
+            db.createObjectStore("trips", { keyPath: "id", autoIncrement: true });
+            db.createObjectStore("dailySummary", { keyPath: "date" });
+            db.createObjectStore("settings", { keyPath: "id" });
+        };
+
+        dbRequest.onsuccess = (e) => {
+            db = e.target.result;
+            initializeApp();
+        };
+
+        // --- APP LOGIC ---
+        let currentSettings = { id: 1, driverName: 'Himanshu', dailyRent: 1000, insurance: 50, fuelType: 'CNG', darkMode: false };
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        async function initializeApp() {
+            await loadSettings();
+            renderDashboard();
+            checkReminder();
+            if (currentSettings.darkMode) document.body.classList.add('dark-mode');
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('nav-' + screenId.split('-')[1]).classList.add('active');
+            
+            if(screenId === 'screen-home') renderDashboard();
+            if(screenId === 'screen-log') renderTrips();
+            if(screenId === 'screen-pl') renderPL();
+            if(screenId === 'screen-history') renderHistory();
+            if(screenId === 'screen-analytics') renderAnalytics();
+        }
+
+        // --- SETTINGS ---
+        async function loadSettings() {
+            return new Promise(resolve => {
+                const tx = db.transaction("settings", "readonly");
+                const store = tx.objectStore("settings");
+                const req = store.get(1);
+                req.onsuccess = () => {
+                    if (req.result) {
+                        currentSettings = req.result;
+                        document.getElementById('set-name').value = currentSettings.driverName;
+                        document.getElementById('set-rent').value = currentSettings.dailyRent;
+                        document.getElementById('set-ins').value = currentSettings.insurance;
+                        document.getElementById('set-fuel').value = currentSettings.fuelType;
+                        document.getElementById('set-dark').checked = currentSettings.darkMode;
+                    }
+                    resolve();
+                };
+            });
+        }
+
+        function saveSettings() {
+            currentSettings = {
+                id: 1,
+                driverName: document.getElementById('set-name').value,
+                dailyRent: parseFloat(document.getElementById('set-rent').value),
+                insurance: parseFloat(document.getElementById('set-ins').value),
+                fuelType: document.getElementById('set-fuel').value,
+                darkMode: document.getElementById('set-dark').checked
+            };
+            const tx = db.transaction("settings", "readwrite");
+            tx.objectStore("settings").put(currentSettings);
+            showToast("Settings Updated");
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // --- TRIPS ---
+        async function addTrip() {
+            const trip = {
+                date: todayStr,
+                from: document.getElementById('trip-from').value,
+                to: document.getElementById('trip-to').value,
+                fare: parseFloat(document.getElementById('trip-fare').value) || 0,
+                tip: parseFloat(document.getElementById('trip-tip').value) || 0,
+                duration: parseInt(document.getElementById('trip-duration').value) || 0,
+                waitingTime: parseInt(document.getElementById('trip-wait').value) || 0,
+                paymentMode: document.getElementById('trip-pay').value,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            const tx = db.transaction("trips", "readwrite");
+            tx.objectStore("trips").add(trip);
+            showToast("Trip Added");
+            renderTrips();
+            
+            // Reset form
+            document.getElementById('trip-from').value = '';
+            document.getElementById('trip-to').value = '';
+            document.getElementById('trip-fare').value = '';
+            document.getElementById('trip-tip').value = '0';
+        }
+
+        async function renderTrips() {
+            const tx = db.transaction("trips", "readonly");
+            const store = tx.objectStore("trips");
+            const req = store.getAll();
+            req.onsuccess = () => {
+                const todayTrips = req.result.filter(t => t.date === todayStr);
+                const list = document.getElementById('trips-list');
+                list.innerHTML = '<h4>Today\'s Trips</h4>';
+                let total = 0;
+                todayTrips.forEach((t, i) => {
+                    total += (t.fare + t.tip);
+                    list.innerHTML += `
+                        <div class="card trip-item">
+                            <div style="display:flex; justify-content:space-between">
+                                <strong>${t.from} ➔ ${t.to}</strong>
+                                <span class="currency">₹${t.fare + t.tip}</span>
+                            </div>
+                            <div class="trip-meta">
+                                <span>${t.time} | ${t.duration}m | Wait: ${t.waitingTime}m</span>
+                                <span class="badge">${t.paymentMode}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                // Load daily header info
+                const hReq = db.transaction("dailySummary", "readonly").objectStore("dailySummary").get(todayStr);
+                hReq.onsuccess = () => {
+                    if(hReq.result) {
+                        document.getElementById('start-km').value = hReq.result.startKM || 0;
+                        document.getElementById('end-km').value = hReq.result.endKM || 0;
+                    }
+                };
+            };
+        }
+
+        // --- DASHBOARD & PL ---
+        async function renderDashboard() {
+            const trips = await getAllTrips();
+            const todayTrips = trips.filter(t => t.date === todayStr);
+            const gross = todayTrips.reduce((acc, t) => acc + t.fare + t.tip, 0);
+            
+            document.getElementById('home-date').innerText = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+            document.getElementById('dash-gross').innerText = formatINR(gross);
+            document.getElementById('dash-trips').innerText = todayTrips.length;
+            
+            // Calculate Net for dashboard
+            const summary = await getSummary(todayStr);
+            const net = gross - currentSettings.dailyRent - currentSettings.insurance - (summary.fuel || 0) - (summary.other || 0);
+            document.getElementById('dash-net').innerText = formatINR(net);
+            document.getElementById('dash-net').style.color = net >= 0 ? 'var(--accent)' : 'var(--loss)';
+        }
+
+        async function renderPL() {
+            const trips = await getAllTrips();
+            const todayTrips = trips.filter(t => t.date === todayStr);
+            const gross = todayTrips.reduce((acc, t) => acc + t.fare + t.tip, 0);
+            const summary = await getSummary(todayStr);
+
+            document.getElementById('pl-gross').innerText = formatINR(gross);
+            document.getElementById('pl-rent').innerText = `- ${formatINR(currentSettings.dailyRent)}`;
+            document.getElementById('pl-ins').innerText = `- ${formatINR(currentSettings.insurance)}`;
+            document.getElementById('pl-fuel-type').innerText = currentSettings.fuelType;
+            document.getElementById('pl-fuel-input').value = summary.fuel || 0;
+            document.getElementById('pl-other-input').value = summary.other || 0;
+
+            const fuel = parseFloat(document.getElementById('pl-fuel-input').value) || 0;
+            const other = parseFloat(document.getElementById('pl-other-input').value) || 0;
+            const net = gross - currentSettings.dailyRent - currentSettings.insurance - fuel - other;
+
+            document.getElementById('pl-net').innerText = formatINR(net);
+            document.getElementById('pl-net').style.color = net >= 0 ? 'var(--accent)' : 'var(--loss)';
+
+            // Metrics
+            const km = (summary.endKM || 0) - (summary.startKM || 0);
+            document.getElementById('pl-tot-km').innerText = km + " km";
+            document.getElementById('pl-rate-km').innerText = km > 0 ? formatINR(gross/km) : '₹0';
+            document.getElementById('pl-tot-wait').innerText = todayTrips.reduce((acc,t) => acc + t.waitingTime, 0) + "m";
+            document.getElementById('pl-avg-fare').innerText = todayTrips.length > 0 ? formatINR(gross/todayTrips.length) : '₹0';
+        }
+
+        async function calculatePL() {
+            const fuel = parseFloat(document.getElementById('pl-fuel-input').value) || 0;
+            const other = parseFloat(document.getElementById('pl-other-input').value) || 0;
+            saveDailyHeader(fuel, other);
+            renderPL();
+        }
+
+        function saveDailyHeader(fuel = null, other = null) {
+            const startKM = parseFloat(document.getElementById('start-km').value) || 0;
+            const endKM = parseFloat(document.getElementById('end-km').value) || 0;
+            
+            const tx = db.transaction("dailySummary", "readwrite");
+            const store = tx.objectStore("dailySummary");
+            const req = store.get(todayStr);
+            req.onsuccess = () => {
+                const data = req.result || { date: todayStr };
+                data.startKM = startKM;
+                data.endKM = endKM;
+                if(fuel !== null) data.fuel = fuel;
+                if(other !== null) data.other = other;
+                store.put(data);
+            };
+        }
+
+        async function lockDay() {
+            showToast("Day Locked & Saved");
+            showScreen('screen-home');
+        }
+
+        // --- HISTORY ---
+        async function renderHistory() {
+            const trips = await getAllTrips();
+            const summaries = await getAllSummaries();
+            const dates = [...new Set(trips.map(t => t.date))].sort().reverse();
+            
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            dates.forEach(d => {
+                const dayTrips = trips.filter(t => t.date === d);
+                const daySummary = summaries.find(s => s.date === d) || {};
+                const gross = dayTrips.reduce((acc, t) => acc + t.fare + t.tip, 0);
+                const net = gross - currentSettings.dailyRent - currentSettings.insurance - (daySummary.fuel || 0) - (daySummary.other || 0);
+                
+                const colorClass = net > 0 ? 'var(--accent)' : 'var(--loss)';
+                
+                list.innerHTML += `
+                    <div class="card" onclick="alert('Viewing full details for ${d}')">
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                            <strong>${new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short'})}</strong>
+                            <span style="color:${colorClass}; font-weight:bold">${formatINR(net)} Net</span>
+                        </div>
+                        <div class="trip-meta">
+                            <span>${dayTrips.length} Trips | Gross: ${formatINR(gross)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- ANALYTICS ---
+        async function renderAnalytics() {
+            const trips = await getAllTrips();
+            const summaries = await getAllSummaries();
+            const last7Days = [];
+            for(let i=6; i>=0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                last7Days.push(d.toISOString().split('T')[0]);
+            }
+
+            const dailyNet = last7Days.map(d => {
+                const dayTrips = trips.filter(t => t.date === d);
+                const daySummary = summaries.find(s => s.date === d) || {};
+                const gross = dayTrips.reduce((acc, t) => acc + t.fare + t.tip, 0);
+                return gross - currentSettings.dailyRent - currentSettings.insurance - (daySummary.fuel || 0) - (daySummary.other || 0);
+            });
+
+            // Payment Split
+            const modes = { UPI: 0, Cash: 0, Card: 0 };
+            trips.forEach(t => modes[t.paymentMode]++);
+
+            // Charts
+            new Chart(document.getElementById('earningsChart'), {
+                type: 'line',
+                data: {
+                    labels: last7Days.map(d => d.split('-')[2]),
+                    datasets: [{ label: 'Daily Net Profit (₹)', data: dailyNet, borderColor: '#1A3C5E', tension: 0.1 }]
+                }
+            });
+
+            new Chart(document.getElementById('paymentChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['UPI', 'Cash', 'Card'],
+                    datasets: [{ data: [modes.UPI, modes.Cash, modes.Card], backgroundColor: ['#2ECC71', '#F1C40F', '#3498DB'] }]
+                },
+                options: { plugins: { title: { display: true, text: 'Payment Mode Split' } } }
+            });
+        }
+
+        // --- UTILS ---
+        function formatINR(val) {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
+        }
+
+        async function getAllTrips() {
+            return new Promise(resolve => {
+                const req = db.transaction("trips", "readonly").objectStore("trips").getAll();
+                req.onsuccess = () => resolve(req.result);
+            });
+        }
+
+        async function getAllSummaries() {
+            return new Promise(resolve => {
+                const req = db.transaction("dailySummary", "readonly").objectStore("dailySummary").getAll();
+                req.onsuccess = () => resolve(req.result);
+            });
+        }
+
+        async function getSummary(date) {
+            return new Promise(resolve => {
+                const req = db.transaction("dailySummary", "readonly").objectStore("dailySummary").get(date);
+                req.onsuccess = () => resolve(req.result || {});
+            });
+        }
+
+        function checkReminder() {
+            const now = new Date();
+            if(now.getHours() >= 21) {
+                getAllTrips().then(trips => {
+                    if(trips.filter(t => t.date === todayStr).length === 0) {
+                        document.getElementById('reminder-banner').style.display = 'block';
+                    }
+                });
+            }
+        }
+
+        function exportData() {
+            Promise.all([getAllTrips(), getAllSummaries(), loadSettings()]).then(data => {
+                const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `drivelog_backup_${todayStr}.json`;
+                a.click();
+            });
+        }
+
+        function resetAll() {
+            if(confirm("Are you sure? This will delete ALL trip history permanently.")) {
+                const tx = db.transaction(["trips", "dailySummary"], "readwrite");
+                tx.objectStore("trips").clear();
+                tx.objectStore("dailySummary").clear();
+                location.reload();
+            }
+        }
+
+        // Service Worker Register
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
+</body>
+</html>
